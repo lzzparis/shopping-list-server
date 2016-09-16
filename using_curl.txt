@@ -1,0 +1,11 @@
+# Make a GET request to fetch the list of items
+curl http://localhost:8080/items
+
+# Make a POST request to add an item
+curl -X POST -H "Content-Type: application/json" -d '{"name": "durian"}' http://localhost:8080/items
+
+# Make a PUT request to edit an item
+curl -X PUT -H "Content-Type: application/json" -d '{"name": "durian", "id": 3}' http://localhost:8080/items/3
+
+# Make a DELETE request to delete an item
+curl -X DELETE http://localhost:8080/items/3
