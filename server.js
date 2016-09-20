@@ -4,7 +4,13 @@ var jsonParser = bodyParser.json();
 
 var Storage = {
 	add: function(name, id) {
-		var item = {name: name, id: this.setId};
+		var item;
+		if(id==null) {
+			item = {name: name, id: this.setId};
+		}
+		else{
+			item = {name: name, id: id};
+		}
 		this.items.push(item);
 		this.setId += 1; 
 		return item;
@@ -32,11 +38,13 @@ var Storage = {
 			}
 		});
 		if(targetIndex === null){
-			this.add(name, id);	
+			return this.add(name, id);	
 		}
 		else{
 			this.items[targetIndex].name = name;
+			return this.items[targetIndex];
 		}
+		
 	}
 };
 
@@ -44,7 +52,7 @@ var Storage = {
 var createStorage = function() {
 	var storage = Object.create(Storage);
 	storage.items = [];
-	storage.setId = 1;
+	storage.setId = 0;
 	return storage;
 }
 
@@ -72,7 +80,7 @@ app.post('/items', jsonParser, function(request, response){
 });
 
 app.delete('/items/:id', function(request, response){
-	var id = request.params.id;
+	var id = parseFloat(request.params.id);
 	var success = storage.remove(id);	
 	if(!success){
 		return response.status(404).json({status:"ERROR"});
@@ -83,7 +91,7 @@ app.delete('/items/:id', function(request, response){
 });
 
 app.put('/items/:id', jsonParser, function(request, response){
-	var id = request.params.id;
+	var id = parseFloat(request.params.id);
 	if(!('id' in request.body) || !('name' in request.body)){
 		return response.status(404).json({message:"bad request"});
 	}
@@ -99,3 +107,5 @@ app.put('/items/:id', jsonParser, function(request, response){
 
 app.listen(process.env.PORT || 8080, process.env.IP);
 
+exports.app = app;
+exports.storage = storage;
