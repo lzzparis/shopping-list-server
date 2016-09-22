@@ -92,7 +92,7 @@ app.delete('/items/:id', function(request, response){
 
 app.put('/items/:id', jsonParser, function(request, response){
 	var id = parseFloat(request.params.id);
-	if(!('id' in request.body) || !('name' in request.body)){
+	if(!('id' in request.body) || !('name' in request.body) || (id == undefined)){
 		return response.status(404).json({message:"bad request"});
 	}
 	else if (request.body.id != id){

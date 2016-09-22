@@ -56,7 +56,19 @@ describe('Shopping List', function() {
         });
 		});
 
-		it('should fail gracefully for invalid body during post');
+		it('should fail gracefully for invalid body during post', function(done){
+			chai.request(app)
+			.post('/items')
+			.send({'height':'60in'})
+			.end(function(err, res){
+				res.should.have.status(400);
+				res.text.should.equal("Bad Request");
+				storage.items[2].name.should.equal("Peppers");
+				storage.items[2].id.should.equal(2);
+				done();
+			});
+		});
+
     it('should edit an item on put',function(done){
 			chai.request(app)
 			.put('/items/3')
@@ -110,6 +122,7 @@ describe('Shopping List', function() {
 			});
 		});
 		it('should fail gracefully for bad JSON during a put');
+
 		it('should fail gracefully for invalid body during put');
     it('should delete an item on delete',function(done){
 			chai.request(app)
@@ -129,6 +142,43 @@ describe('Shopping List', function() {
 				done();
 			});
 		});
-		it('should fail gracefully on delete with no ID');
-		it('should fail gracefully on delete with nonexistent ID');
+		it('should fail gracefully on delete with no ID',function(done){
+			chai.request(app)
+			.delete('/items/')
+			.end(function(err, res){
+				res.should.have.status(404);
+				res.text.should.equal("Not Found");
+        storage.items.should.have.length(4);
+        storage.items[0].name.should.equal("Broad beans");
+        storage.items[0].id.should.equal(0);
+        storage.items[1].name.should.equal("Tomatoes");
+        storage.items[1].id.should.equal(1);
+        storage.items[2].name.should.equal("bananas");
+        storage.items[2].id.should.equal(2);
+        storage.items[3].name.should.equal("kiwi");
+        storage.items[3].id.should.equal(75);
+				done();
+			});
+		});
+		
+		it('should fail gracefully on delete with nonexistent ID', function(done){
+			chai.request(app)
+			.delete('/items/-1')
+			.end(function(err, res){
+        res.should.have.status(404);
+        res.body.status.should.equal("ERROR");
+        storage.items.should.have.length(4);
+        storage.items[0].name.should.equal("Broad beans");
+        storage.items[0].id.should.equal(0);
+        storage.items[1].name.should.equal("Tomatoes");
+        storage.items[1].id.should.equal(1);
+        storage.items[2].name.should.equal("bananas");
+        storage.items[2].id.should.equal(2);
+        storage.items[3].name.should.equal("kiwi");
+        storage.items[3].id.should.equal(75);
+        done();
+
+
+			});
+		});
 });
