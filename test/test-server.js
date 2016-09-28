@@ -89,7 +89,25 @@ describe('Shopping List', function() {
 				done();
 			});	
 		});
-		it('should fail gracefully for put with no id');
+		it('should fail gracefully for put with no id',function(done){
+			chai.request(app)
+			.put('/items/')
+			.end(function(err, res){
+				res.should.have.status(404);
+        storage.items.should.have.length(4);
+        storage.items[0].name.should.equal("Broad beans");
+        storage.items[0].id.should.equal(0);
+        storage.items[1].name.should.equal("Tomatoes");
+        storage.items[1].id.should.equal(1);
+        storage.items[2].name.should.equal("Peppers");
+        storage.items[2].id.should.equal(2);
+        storage.items[3].name.should.equal("potatoes");
+        storage.items[3].id.should.equal(3);
+				done();
+			});
+		}
+    
+    );
 		it('should use the body ID when it differs from the endpoint id',function(done){
 			chai.request(app)
 			.put('/items/3')
@@ -147,7 +165,6 @@ describe('Shopping List', function() {
 			.delete('/items/')
 			.end(function(err, res){
 				res.should.have.status(404);
-				res.text.should.equal("Not Found");
         storage.items.should.have.length(4);
         storage.items[0].name.should.equal("Broad beans");
         storage.items[0].id.should.equal(0);
